@@ -1,0 +1,42 @@
+Requirements/Notes for Handbrake Script
+
+Movies and TV Shows will be named and organized differently
+    Movies - share\Movie\MovieName (release year).ext
+    TV Show - share\TV Show\ShowName\Season XX\ShowName-sXXeYY.ext
+
+ShowName/MovieName = Source in Handbrake
+
+APIs for naming? 
+    TV Shows = http://api.thetvdb.com
+    Movies = http://omdbapi.com/
+
+Make Powershell REST calls using Invoke-RestMethod
+    https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/invoke-restmethod?view=powershell-6
+
+Workflow
+    Params
+        -movie or -tvShow (switch)
+        if movie, prompt $year (format 4-digit year)
+            if year not provided, bail
+            if year wrong format, reprompt
+        if tvShow, prompt $seasonNumber (format XX)
+            if season not provided, bail
+            if season wrong format, reprompt
+    Check to see if DVD is present in drive
+        Default drive to D:\
+        If not, bail
+    If DVD present, invoke Handbrake CLI with necessary params
+        https://handbrake.fr/docs/en/latest/cli/command-line-reference.html
+        Set input (-i) to DVD drive
+            If -tvShow => set --min-duration to 600
+        Set output (-o) 
+            If -movie => C:\MovieRips\MovieName ($year).m4v
+            If -tvShow => C:\MovieRips\ShowName\Season $seasonNumber\ShowName-s$seasonNumbere
+        Set verbose (-v)
+        If movie set --main-feature
+    Wait until Handbrake finishes
+        If error code, bail
+    Copy ripped file from C:\MovieRips to file share
+        If movie -> \\rvsserv1\video\Movie
+        If tv show -> \\rvsserv1\video\TV Show\ShowName\Season XX\
+    
