@@ -1,8 +1,11 @@
 Param(
     [Parameter(Mandatory)]
     [ValidateSet("movie", "tv", IgnoreCase=$true)]
-    [string]$format
+    [string]
+    ${Please enter the format (Valid entires are 'movie' or 'tv')}
 )
+
+$format = ${Please enter the format (Valid entires are 'movie' or 'tv')}
 
 if($format -eq "movie") {
     Write-Output "Ripping a movie!"
