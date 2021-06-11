@@ -30,24 +30,46 @@ if($format -eq "movie") {
     Write-Output "Ripping a TV show!"
 
     $showName = Read-Host -Prompt 'TV Show Name? (With No Spaces in the Name)'
-    $seasonNumber = Read-Host -Prompt 'Season number (With Format XX)?'
-    $stringEpisodeNumberStart = Read-Host -Prompt "Starting episode number? (With Format XX)"
-    $stringEpisodeNumberEnd = Read-Host -Prompt "Ending episode number? (With Format XX)"
+    $seasonNumber = Read-Host -Prompt 'Season number?'
+    $episodeNumberStart = Read-Host -Prompt "Starting episode number?"
+    $episodeNumberEnd = Read-Host -Prompt "Ending episode number?"
 
-    $intEpisodeNumberStart = [int]$stringEpisodeNumberStart
-    $intEpisodeNumberEnd = [int]$stringEpisodeNumberEnd
-
-    $episodeCount = $intEpisodeNumberEnd - $intEpisodeNumberStart + 1
+    $episodeCount = $episodeNumberEnd - $episodeNumberStart + 1
 
     Write-Output "Preparing to rip TV show $showName Season $seasonNumber..." 
-    Write-Output "Start = $intEpisodeNumberStart" 
-    Write-Output "End = $intEpisodeNumberEnd" 
-    Write-Output "End = $episodeCount" 
+
+    if ($seasonNumber -lt 10) {
+        $castedNumber = [string]$seasonNumber
+        $seasonNumberString = "0$castedNumber"
+    } else {
+        $currentEpisodeString = [string]$seasonNumber
+    }
+
+    $showFolderExists = Test-Path -PathType Container C:\MovieRips\"$showName" 
+    $seasonFolderExists = Test-Path -PathType Container C:\MovieRips\"$showName"\Season"$seasonNumberString"
+
+    if ($showFolderExists -eq $false) {
+        Write-Output "Createing show folder at C:\MovieRips\$showName" 
+        New-Item -ItemType Directory -Force -Path C:\MovieRips\"$showName"
+    }
+    
+    if ($seasonFolderExists -eq $false) {
+        Write-Output "C:\MovieRips\$showName\Season$seasonNumberString" 
+        New-Item -ItemType Directory -Force -Path C:\MovieRips\"$showName"\Season"$seasonNumberString"
+    }    
 
     for ($i = 0; $i -lt $episodeCount; $i++) {
-        $currentTitleNumber = $i + 1
-        Write-Output "Ripping episode $currentTitleNumber ..." 
-        # .\..\HandBrakeCLI-1.1.2-win-x86_64\HandBrakeCLI.exe -i D:\ --title $currentTitleNumber -o C:\MovieRips\"$showName"\"Season$seasonNumber\$showName-s"
+        $currentEpisodeNumber = $i + 1
+        Write-Output "Ripping episode $currentEpisodeNumber ..." 
+
+        if ($currentEpisodeNumber -lt 10) {
+            $castedNumber = [string]$currentEpisodeNumber
+            $currentEpisodeString = "0$castedNumber"
+        } else {
+            $currentEpisodeString = [string]$number
+        }
+    
+        .\..\HandBrakeCLI-1.1.2-win-x86_64\HandBrakeCLI.exe -i D:\ --title $currentEpisodeNumber --min-duration 600 -o C:\MovieRips\"$showName"\Season"$seasonNumberString"\"$showName-s$seasonNumberString-e$currentEpisodeString".m4v                
     }
 }
 
