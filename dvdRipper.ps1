@@ -58,18 +58,17 @@ if($format -eq "movie") {
         New-Item -ItemType Directory -Force -Path C:\MovieRips\"$showName"\Season"$seasonNumberString"
     }    
 
-    for ($i = 0; $i -lt $episodeCount; $i++) {
-        $currentEpisodeNumber = $i + 1
-        Write-Output "Ripping episode $currentEpisodeNumber ..." 
+    for ($i = [int]$episodeNumberStart; $i -lt $episodeCount; $i++) {        
+        Write-Output "Ripping episode $i ..." 
 
-        if ($currentEpisodeNumber -lt 10) {
-            $castedNumber = [string]$currentEpisodeNumber
+        if ($i -lt 10) {
+            $castedNumber = [string]$i
             $currentEpisodeString = "0$castedNumber"
         } else {
-            $currentEpisodeString = [string]$number
+            $currentEpisodeString = [string]$i
         }
     
-        .\..\HandBrakeCLI-1.1.2-win-x86_64\HandBrakeCLI.exe -i D:\ --title $currentEpisodeNumber --min-duration 600 -o C:\MovieRips\"$showName"\Season"$seasonNumberString"\"$showName-s$seasonNumberString-e$currentEpisodeString".m4v                
+        .\..\HandBrakeCLI-1.1.2-win-x86_64\HandBrakeCLI.exe -i D:\ --title $i --min-duration 600 -o C:\MovieRips\"$showName"\Season"$seasonNumberString"\"$showName-s$seasonNumberString-e$currentEpisodeString".m4v                
     }
 }
 
